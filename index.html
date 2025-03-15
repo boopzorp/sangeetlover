@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sangeet lover 🎧</title>
+    <style>
+        body {
+            background-color: #f9f0e1;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #f3e0c0;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        .title {
+            font-size: 24px;
+            font-family: 'Inknut Antiqua', serif;
+            font-weight: bold;
+            color: #247b41af;
+        }
+        .cassette {
+            background-color: #000;
+            border: 4px solid #fff2af;
+            width: 85%;
+            height: 180px;
+            position: relative;
+            border-radius: 12px;
+            margin: 20px auto;
+        }
+        .cassette .label {
+            background-color: #fff;
+            position: absolute;
+            top: px;
+            left: 10%;
+            width: 80%;
+            height: 60px;
+            text-align: center;
+            line-height: 50px;
+            font-size: larger;
+            font-weight: bold;
+            border-radius: 4px;
+            font-family: 'Caveat', sans-serif;
+        }
+        .cassette .reel {
+            width: 35px;
+            height: 35px;
+            background-color: #c5ffb7;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            position: absolute;
+            top: 60px;
+        }
+        .cassette .reel.left { left: 15%; top: 40%; }
+        .cassette .reel.right { right: 15%; top: 40%; }
+
+        .cassette .tape {
+            position: absolute;
+            bottom: 15px;
+            left: 20%;
+            width: 60%;
+            height: 20px;
+            background: linear-gradient(90deg, rgba(254, 255, 237, 0.826), rgb(232, 255, 232), rgb(210, 187, 255));
+            border-radius: 4px;
+        }
+        .input-box {
+            background-color: #fdf5e6;
+            border: 2px solid #f1c384;
+            font-family: monospace;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .track-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .delete-btn {
+            background-color: #ff6b6b;
+            border: none;
+            color: #fff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+        .button {
+            background-color: #8b5a2b;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 900;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .button:disabled {
+            background-color: #d3b489;
+            cursor: not-allowed;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">    
+    <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="title">mixtape.</div>
+        <div class="cassette">
+            <div class="label">masti records</div>
+            <div class="reel left"></div>
+            <div class="reel right"></div>
+            <div class="tape"></div>
+        </div>
+        
+        <div id="track-list">
+            <div class="track-container">
+                <input class="input-box" type="text" placeholder="Paste YouTube URL here">
+            </div>
+        </div>
+        <button id="add-track" class="button">ADD ANOTHER TRACK (1/5)</button>
+        <button class="button" id="create-mixtape">CREATE MIXTAPE</button>
+    </div>
+
+    <script>
+        const trackList = document.getElementById('track-list');
+        const addTrackButton = document.getElementById('add-track');
+        let trackCount = 1;
+
+        addTrackButton.addEventListener('click', () => {
+            if (trackCount < 5) {
+                trackCount++;
+
+                const trackContainer = document.createElement('div');
+                trackContainer.className = 'track-container';
+                
+                const inputBox = document.createElement('input');
+                inputBox.className = 'input-box';
+                inputBox.type = 'text';
+                inputBox.placeholder = 'Paste YouTube URL here';
+                inputBox.required = true;
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.innerHTML = '×';
+                deleteBtn.onclick = function () {
+                    trackList.removeChild(trackContainer);
+                    trackCount--;
+                    addTrackButton.textContent = `ADD ANOTHER TRACK (${trackCount}/5)`;
+                    if (trackCount < 5) {
+                        addTrackButton.disabled = false;
+                    }
+                };
+                
+                trackContainer.appendChild(inputBox);
+                trackContainer.appendChild(deleteBtn);
+                trackList.appendChild(trackContainer);
+                
+                addTrackButton.textContent = `ADD ANOTHER TRACK (${trackCount}/5)`;
+
+                if (trackCount === 5) {
+                    addTrackButton.disabled = true;
+                }
+            }
+        });
+
+        document.getElementById('create-mixtape').addEventListener('click', function () {
+            const label = "masti records"; // Default label
+            const links = [];
+
+            document.querySelectorAll('.input-box').forEach(input => {
+                const url = input.value.trim();
+                if (url) {
+                    const videoId = extractVideoId(url);
+                    if (videoId) links.push(videoId);
+                }
+            });
+
+            if (links.length === 0) {
+                alert("Please add at least one valid YouTube link.");
+                return;
+            }
+
+            const url = `player.html?label=${encodeURIComponent(label)}&links=${encodeURIComponent(JSON.stringify(links))}`;
+            window.location.href = url;
+        });
+
+        function extractVideoId(url) {
+            const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|v\/|.*\/|.*vi=))([^?&]*)/);
+            return match ? match[1] : null;
+        }
+    </script>
+</body>
+</html>
